@@ -1,9 +1,11 @@
 
 
-export const globalProperties = () => {
-    const baseUrl = window.baseUrl;
+// export const globalProperties = () => {
+//     const baseUrl = window.baseUrl;
 
-    return {
-        baseUrl
-    }
-}
+//     return {
+//         baseUrl
+//     }
+// }
+
+export const baseUrl = window.baseUrl;

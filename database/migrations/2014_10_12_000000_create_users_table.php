@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('phone', 20)->nullable();
             $table->string('profile_pic')->default('assets/images/profile_pic.png');
-            $table->enum('user_type', ['SUPER_ADMIN', 'ADMIN', 'USER',])->default('USER');
+            $table->enum('user_type', ['SUPER_ADMIN', 'ADMIN', 'USER'])->default('USER');
             $table->enum('status', ['ACTIVE', 'BANNED'])->default('ACTIVE');
             $table->index(['name', 'phone', 'email']);
             $table->softDeletes();

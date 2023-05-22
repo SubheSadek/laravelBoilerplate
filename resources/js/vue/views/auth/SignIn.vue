@@ -99,7 +99,7 @@ import {
 } from 'view-ui-plus'
 
 import { useSignIn } from './js/signIn';
-import { globalProperties } from '../../helpers/services/global';
+import { baseUrl } from '../../helpers/services/global';
 const {
     formValidate,
     ruleValidate,
@@ -107,7 +107,7 @@ const {
     signIn,
     isLoading
 } = useSignIn();
-const { baseUrl } = globalProperties();
+
 
 </script>
 

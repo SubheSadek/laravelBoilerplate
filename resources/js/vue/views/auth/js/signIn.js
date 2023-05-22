@@ -29,8 +29,7 @@ export function useSignIn() {
                 isLoading.value = true;
                 const res = await callApi("POST", "/admin/auth/login", formValidate);
                 if (res.data.success) {
-                    console.log(res.data)
-                    // window.location.href = "/";
+                    window.location.reload();
                 }
                 isLoading.value = false;
             }

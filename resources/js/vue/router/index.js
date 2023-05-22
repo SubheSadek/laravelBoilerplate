@@ -5,7 +5,7 @@ const masterRoutes = [
     {
         path: "/",
         name: "home",
-        component: () => import("../views/main/Home.vue"),
+        component: () => import("../views/home/Home.vue"),
         meta: {
             title: "Dashboard",
             menuName: "Dashboard",
