@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import AdminRoutes from "../views/administration/js/routes";
 // const auth = window.authUser ? window.authUser : null;
 
 const masterRoutes = [
@@ -20,6 +21,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         ...masterRoutes,
+        ...AdminRoutes
     ]
 });
 

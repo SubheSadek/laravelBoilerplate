@@ -1,9 +1,9 @@
 <template>
 	<span>
-		<!-- <div v-if="$store.state.dataLoading" id="loading">
-			<img id="loading-image" src="@/assets/images/Tag-For-Loading-Bar-Gif-Transparent-Loading-Gif-.gif"
+		<div v-if="storeMain.dataLoading" id="loading">
+			<img id="loading-image" src="@/assets/images/loader.gif"
 				alt="Loading..." />
-		</div> -->
+		</div>
 		<div class="page_block"></div>
 		<div class="d-flex flex-column flex-root">
 			<!--begin::Page-->
@@ -203,6 +203,7 @@ import './css/main.css'
 import Sidebar from './components/Sidebar.vue';
 import { baseUrl } from '@/vue/helpers/services/global.js';
 import { useMain } from './js/main';
-const { logout, checkRoute } = useMain();
+const { logout, checkRoute, useMainStore } = useMain();
+const storeMain = useMainStore();
 </script>
 

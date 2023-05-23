@@ -1,5 +1,5 @@
 import { callApi } from "../../../helpers/services/callApi";
-
+import { useMainStore } from '@/vue/store';
 export const useMain = () => {
 
     const logout = async () => {
@@ -15,6 +15,7 @@ export const useMain = () => {
 
     return {
         logout,
-        checkRoute
+        checkRoute,
+        useMainStore
     }
 }

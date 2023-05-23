@@ -1,0 +1,7 @@
+.selected_txt_banned .ivu-select-selected-value {
+    color: #ed4014 !important;
+}
+
+.selected_txt_active .ivu-select-selected-value {
+    color: #19be6b !important;
+}

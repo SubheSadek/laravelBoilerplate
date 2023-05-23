@@ -4,9 +4,16 @@
       "import",
       {
         "libraryName": "view-ui-plus",
-        "libraryDirectory": "src/components"
+        "libraryDirectory": "src/components",
+        "locale": "en-us"
       },
       "view-ui-plus"
     ]
+    //   ["vue-i18n", {
+    // "i18n": {
+    //   "locale": "en-us",
+    //   "fallbackLocale": "en-us"
+    // }
+//   }]
   ]
 }
