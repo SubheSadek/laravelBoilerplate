@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Models\User;
+use App\Http\Controllers\Admin\Manage\User\UserService;
 use App\Utilities\Utility;
 use Illuminate\Http\JsonResponse;
 
@@ -10,12 +10,12 @@ class AuthService
 {
     public function checkAdminAuthorization(string $email): bool
     {
-        $user = $this->findUser('email', $email);
+        $user = (new UserService)->userFindOrFailBy('email', $email);
 
         if ($user->status !== Utility::USER_ACTIVE) {
             return false;
         }
-        if (! in_array($user->user_type, Utility::ADMIN_USER_TYPES)) {
+        if (!in_array($user->user_type, Utility::ADMIN_USER_TYPES)) {
             return false;
         }
 
@@ -25,7 +25,7 @@ class AuthService
     public function loginAdmin(array $data): JsonResponse
     {
         $isAuthorized = $this->checkAdminAuthorization($data['email']);
-        if (! $isAuthorized) {
+        if (!$isAuthorized) {
             return withError('Invalid Credentials', 400);
         }
 
@@ -34,11 +34,6 @@ class AuthService
         }
 
         return withError('Email or password is incorrect', 400);
-    }
-
-    public function findUser(string $key, string $value): ?User
-    {
-        return User::where($key, $value)->firstOrFail();
     }
 
     public function logoutAdmin(): JsonResponse

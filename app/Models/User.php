@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Utilities\Utility;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -29,7 +30,17 @@ class User extends Authenticatable
         'status',
     ];
 
-    public function scopeWithoutAdminUser($query)
+    public function scopeFilterBy(Builder $query, string $searchTxt): Builder
+    {
+        return $query->when($searchTxt, function (Builder $query, string $searchTxt) {
+            $query->where(function ($query) use ($searchTxt) {
+                $query->where('name', 'like', '%'.$searchTxt.'%');
+                $query->orWhere('phone', 'like', '%'.$searchTxt.'%');
+            });
+        });
+    }
+
+    public function scopeWithoutAdminUser(Builder $query): Builder
     {
         return $query->whereNotIn('user_type', Utility::ADMIN_USER_TYPES);
     }
@@ -41,7 +52,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        // 'remember_token',
     ];
 
     /**
@@ -50,7 +60,6 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        // 'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 }

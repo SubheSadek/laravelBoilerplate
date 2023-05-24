@@ -1,8 +1,15 @@
+import axios from 'axios';
+import { LoadingBar } from 'view-ui-plus';
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+LoadingBar.config({
+    height: 4
+});
 import { info, success, swr, warning } from "./message";
 
 const WARNING_STATUS = [404, 401, 400];
 
 export const callApi = async (method, url, data, dataType = 'data') => {
+    LoadingBar.start();
     try {
         const res = await axios({
             headers: {
@@ -13,6 +20,9 @@ export const callApi = async (method, url, data, dataType = 'data') => {
             url: url,
             [dataType]: data,
         });
+
+        LoadingBar.finish();
+
         if (res.data.message) {
             success(res.data.message);
         }
@@ -28,6 +38,8 @@ export const callApi = async (method, url, data, dataType = 'data') => {
         } else {
             swr();
         }
+
+        LoadingBar.error()
         return res;
     }
 }

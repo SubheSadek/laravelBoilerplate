@@ -1,0 +1,3 @@
+export const USER_ACTIVE_TXT = 'ACTIVE';
+export const USER_BANNED_TXT = 'BANNED';
+export const ALL_USER_STATUS = [USER_ACTIVE_TXT, USER_BANNED_TXT];

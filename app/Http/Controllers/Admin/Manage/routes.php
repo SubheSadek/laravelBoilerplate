@@ -19,5 +19,6 @@ Route::prefix('manage')->as('manage.')->middleware('auth')
 
         $route->prefix('users')->as('users.')->controller(UserController::class)->group(function ($route) {
             $route->get('/', 'index')->name('index');
+            $route->post('/update-status', 'updateStatus')->name('update_status');
         });
     });

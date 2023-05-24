@@ -5,3 +5,12 @@
 .selected_txt_active .ivu-select-selected-value {
     color: #19be6b !important;
 }
+
+
+._active{
+    color: #19be6b !important;
+}
+
+._banned{
+    color: #ed4014 !important;
+}

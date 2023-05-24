@@ -5,19 +5,21 @@
 
             <h3 class="card-title align-items-start flex-column">
                 <span class="card-label  fs-3 mb-1">{{ $route.meta.title }} Table</span>
-                <!-- <span class="text-muted mt-1 fw-bold fs-7">Total Records : {{ dataList.total }}</span> -->
+                <span class="text-muted mt-1 fw-bold fs-7">Total Records : {{ storeMain.getDataList.total }}</span>
             </h3>
 
             <div class="d-flex align-items-center">
 
-                <!-- <div class="position-relative w-md-200px me-md-2">
-                    <Input @input="searchMethod()" clearable @on-clear="searchMethod()" v-model="params.search"
-                        type="text" size="large" class="custom_inp" prefix="ios-search"
+                <div class="position-relative w-md-300px me-md-2">
+                    <Input v-model.trim="storeMain.params.searchTxt"
+                        type="text" @on-search="onSearch(getUsers)"
+                        search enter-button="Search"
+                        @on-change="onClear(getUsers)"
                         placeholder="Search by name, phone and email.." />
-                </div> -->
+                </div>
 
                 <!-- <div class="position-relative w-md-100px me-md-2">
-                    <SelectStaticOption v-model:formValue="params.status" v-model:initialData="types"
+                    <SelectStaticOption v-model:formValue="storeMain.params.status" v-model:initialData="types"
                         :title="`Status`" @onChange="searchMethod" />
                 </div> -->
 
@@ -38,7 +40,7 @@
         <div class="card-body py-3">
 
             <div class="table-responsive">
-                 <!-- -->
+
                 <Transition>
                     <table v-if="!storeMain.dataLoading" class="table table-striped align-middle gs-0 gy-4">
 
@@ -102,13 +104,15 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="d-flex justify-content-start flex-column">
-                                            <Select @on-change="e => handleChange(e, user)" v-model="user.status"
+                                            <Select @on-change="value => updateStatus(user.id, value)" v-model="user.status"
                                                 size="small" :disabled="user.isLoading"
-                                                :class="user.status == 'ACTIVE' ? 'selected_txt_active' : 'selected_txt_banned'"
+                                                :class="`_${user.status.toLowerCase()}`"
                                                 style="width:100px">
-                                                <Option value="ACTIVE"><span style="color:#19be6b">Active</span>
-                                                </Option>
-                                                <Option value="BANNED"><span style="color:#ed4014">Inactive</span>
+                                                <Option
+                                                    v-for="status in allUserStatus()"
+                                                    :key="status.value"
+                                                    :value="status.value">
+                                                    <span :class="status.className">{{ status.name }}</span>
                                                 </Option>
                                             </Select>
                                         </div>
@@ -154,8 +158,8 @@
 
     <Page
         v-if="storeMain.getDataList"
-        @on-page-size-change="e => (params.pageSize = e, getUsers())"
-        v-model="params.page"
+        @on-page-size-change="e => (storeMain.params.pageSize = e, getUsers())"
+        v-model="storeMain.params.page"
         @on-change="getUsers" :total="storeMain.getDataList.total"
         show-sizer style="text-align:center;"
     />
@@ -169,178 +173,32 @@
 </template>
 
 <script setup>
-import lang from 'view-ui-plus/dist/locale/en-US';
+
+import './css/administration.css';
 import {
     Select,
     Option,
     Input,
     Button,
-    Page,
-    locale
+    Page
 } from 'view-ui-plus';
 
-locale(lang);
-import './css/administration.css';
 import { useManageUser } from './js/administration';
-const { params, getUsers, storeMain } = useManageUser();
+const {
+    getUsers,
+    storeMain,
+    onSearch,
+    onClear,
+    ACTIVE_TXT,
+    BANNED_TXT,
+    updateStatus,
+    allUserStatus
+} = useManageUser();
+
+//Call function on page load
 getUsers();
-// import { useMainStore } from '@/vue/store';
-// const storeMain = useMainStore();
-
-// import createOrEditModal from './components/createOrEditModal.vue'
-// import SelectStaticOption from '../../../Helpers/globalComponents/SelectStaticOption.vue'
-// import createOrEditUserModal from './components/createOrEditUserModal.vue'
-
-// import ImgPreview from '../../../Helpers/globalComponents/ImagePreview.vue'
-
-// export default {
-//     name: 'User',
-//     data() {
-//         return {
-//             editData: null,
-//             types: [
-//                 {
-//                     value: 'ACTIVE',
-//                     name: 'Active'
-//                 },
-//                 {
-//                     value: 'BANNED',
-//                     name: 'Inactive'
-//                 },
-//             ],
-//             feeTypes: [],
-//             member: {},
-//             isShow: false,
-//         }
-//     },
-//     watch: {
-//         $route(to, from) {
-//             if (to.name === 'users') {
-//                 this.getUsers();
-//             }
-//         },
-//     },
-//     methods: {
-
-//         async restoreUser(user) {
-//             let msgTxt = 'Are u sure to restore this user ?';
-//             const url = `/user/useristration/restore-user/${user.id}`;
-//             await askForConfirm(this.callApi, url, 'GET', msgTxt, this.getUsers);
-//         },
-
-//         excelExport() {
-//             const formatRequest = formateExportData(this.params.filter_date, this.dataList.data, this.dataList.total);
-//             if (!formatRequest) {
-//                 this.i('Nothing to export !');
-//                 return;
-//             }
-//             window.location.href = '/user/excel/user-exports' + formatRequest;
-//         },
-
-//         async addMemberMethod(row) {
-//             this.member = row;
-//             row.isLoading2 = true;
-//             const res = await this.callApi('get', `/user/societies/society-member-fees/fees-list`);
-//             if (res.data.success) {
-//                 this.feeTypes = res.data.json_data;
-//                 this.$store.state.isModal3 = true;
-//             }
-//             row.isLoading2 = false;
-//         },
-//         async handleChange(value, row) {
-//             row.isLoading = true;
-//             let obj = {
-//                 'status': value,
-//             }
-//             const res = await this.callApi('POST', `/user/useristration/change-status-alt/${row.id}`, obj);
-//             if (res.status === 200) {
-//                 //    row.status = res.data.success
-//             }
-//             row.isLoading = false;
-//         },
-//         changeStatus(row) {
-//             let role = this.$route.name == 'users' ? 'user' : 'User';
-//             let status = row.status == 'ACTIVE' ? 'Banned' : 'Active';
-//             this.$Modal.confirm({
-//                 title: 'Warning',
-//                 okText: 'Yes',
-//                 cancelText: 'No',
-//                 content: `Are you sure to ${status} this ${role}?`,
-//                 onOk: async () => {
-//                     const res = await this.callApi('POST', `/user/useristration/change-status/${row.id}`);
-//                     if (res.status === 200) {
-//                         row.status = res.data.success
-//                     }
-//                 }
-//             });
-//         },
 
 
-//         async deleteUser(user) {
-//             let msgTxt = 'Are u sure delete this user ?';
-//             const url = `/user/useristration/users/${user.id}`;
-//             await askForConfirm(this.callApi,url, 'DELETE', msgTxt, this.getUsers);
-//         },
-
-//         async editRow(row, loading, isShow = false) {
-//             if (!row) {
-//                 this.editData = null;
-
-//                 if (this.$route.name == 'users') {
-//                     this.$store.state.isModal4 = true
-//                 }
-//                 else {
-//                     this.$store.state.isModal = true
-//                 }
-
-//                 return;
-//             }
-//             else if (row && this.$route.name == 'users') {
-//                 row[loading] = true;
-//                 const params = {
-//                     user_type: this.params.user_type
-//                 }
-//                 const res = await this.callApi('get', `/user/useristration/users/${row.id}/edit?user_type=USER`, null, params);
-//                 if (res.data.success) {
-//                     this.isShow = isShow;
-//                     this.editData = res.data.json_data;
-//                     this.$store.state.isModal4 = true;
-//                 }
-//                 row[loading] = false;
-//                 return;
-//             }
-//             this.editData = {
-//                 id: row.id,
-//                 name: row.name,
-//                 email: row.email,
-//                 role_id: row.role_id,
-//                 phone: row.phone
-//             };
-//             this.$store.state.isModal = true;
-//         },
-//         searchMethod(values = null, filter_field = null) {
-//             this.params.filter_date = checkFilteredArray(values, filter_field)
-
-//             this.params.page = 1;
-//             this.getUsers();
-//         },
-//         resetParams() {
-//             this.params = {
-//                 search: '',
-//                 pageSize: 10,
-//                 page: 1,
-//             }
-//         },
-//     },
-//     created() {
-//         let type = this.$route.query?.type;
-//         if (type) {
-//             this.params.user_type = type.toUpperCase();
-//         }
-//         this.getUsers();
-//         this.setCss('1300px');
-//     }
-// }
 </script>
 
 

@@ -8,10 +8,14 @@ export const useMainStore = defineStore({
         isModal : false,
         isModal2 : false,
         isModal3 : false,
-        isModal4 : false,
         dataLoading : false,
         dataList : [],
-        dataListTwo : [],
+        dataListTwo: [],
+        params: {
+            searchTxt: '',
+            page: 1,
+            pageSize: 10,
+        }
     }),
 
     getters: {

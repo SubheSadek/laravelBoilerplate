@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Manage\User\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserListRequest extends FormRequest
+class ListRequest extends FormRequest
 {
     /**
      * Determine if the user is Authorized to make this request.
@@ -24,7 +24,7 @@ class UserListRequest extends FormRequest
         return [
             'pageSize' => ['required', 'integer', 'min:1'],
             'page' => ['required', 'integer', 'min:1'],
-            'search' => ['nullable', 'string', 'max:255'],
+            'searchTxt' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
