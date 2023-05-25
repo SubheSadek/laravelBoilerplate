@@ -15,6 +15,7 @@ class AuthService
         if ($user->status !== Utility::USER_ACTIVE) {
             return false;
         }
+
         if (!in_array($user->user_type, Utility::ADMIN_USER_TYPES)) {
             return false;
         }

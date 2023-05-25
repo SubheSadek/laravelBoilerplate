@@ -26,14 +26,12 @@
             </div>
 
             <div class="card-toolbar">
-                <!-- <a @click="excelExport()" href="javascript:void(0)" class="btn btn-sm btn-bg-primary btn-primary me-2">
-                    <svg-icon name="excel"></svg-icon>
-                    Export
-                </a>
-                <a @click="editRow(null)" href="javascript:void(0)" class="btn btn-sm btn-light-primary">
+
+                <a @click="addUser()" href="javascript:void(0)" class="btn btn-sm btn-light-primary">
                     <svg-icon name="plus"></svg-icon>
-                    New {{ $route.name == 'users' ? 'user' : 'User' }}
-                </a> -->
+                    New User
+                </a>
+
             </div>
         </div>
 
@@ -42,14 +40,15 @@
             <div class="table-responsive">
 
                 <Transition>
+
                     <table v-if="!storeMain.dataLoading" class="table table-striped align-middle gs-0 gy-4">
 
                         <thead>
 
                             <tr class="fw-bolder text-white bg-primary">
-                                <!-- <th class="ps-4 min-w-50px"></th> -->
-                                <th class="min-w-200px">Name</th>
-                                <th class="min-w-100px">Phone</th>
+                                <th class="ps-4 min-w-50px"></th>
+                                <th class="min-w-150px">Name</th>
+                                <th class="min-w-80px">Phone</th>
                                 <th class="min-w-100px">Email</th>
                                 <th class="min-w-50px">Status</th>
                                 <th class="min-w-100px"></th>
@@ -61,50 +60,27 @@
 
                             <tr v-for="(user) in storeMain.getDataList.data" :key="(user.id)">
 
-                                <!-- <td>
-                                    <ImgPreview :singleImage="user.profile_pic" :addLink="true" />
-                                </td> -->
+                                <td>
+                                    <ImagePreviewModal :img="user.profile_pic"/>
+                                </td>
 
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="d-flex justify-content-start flex-column">
-                                            <a
-                                                href="javascript:void(0)"
-                                                class="text-dark _disable_link text-hover-primary mb-1 fs-6">
-                                                {{ user.name }}
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <TableRow :value="user.name" />
+                                </td>
+
+                                <td>
+                                    <TableRow :value="user.phone" />
+                                </td>
+
+                                <td>
+                                    <TableRow :value="user.email" />
                                 </td>
 
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="d-flex justify-content-start flex-column">
-                                            <a
-                                                href="javascript:void(0)"
-                                                class="text-dark _disable_link text-hover-primary mb-1 fs-6">
-                                                {{ user.phone }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </td>
 
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="d-flex justify-content-start flex-column">
-                                            <a
-                                                href="javascript:void(0)"
-                                                class="text-dark _disable_link text-hover-primary mb-1 fs-6">
-                                                {{ user.email }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="d-flex justify-content-start flex-column">
-                                            <Select @on-change="value => updateStatus(user.id, value)" v-model="user.status"
+                                        <div :class="Boolean(user.isStatusChange) && 'd-none'" class="d-flex justify-content-start flex-column">
+                                            <Select @on-change="value => updateStatus(user, value)" v-model="user.status"
                                                 size="small" :disabled="user.isLoading"
                                                 :class="`_${user.status.toLowerCase()}`"
                                                 style="width:100px">
@@ -116,12 +92,17 @@
                                                 </Option>
                                             </Select>
                                         </div>
+
+                                        <div v-if="user.isStatusChange" class="d-inline">
+                                            <Icon type="ios-loading" class="ivu-anim-loop" size="24" /> Please wait...
+                                        </div>
+
                                     </div>
                                 </td>
 
                                 <td class="text-end">
 
-                                    <a @click="editRow(user, 'isLoading', false)"
+                                    <!-- <a @click="editRow(user, 'isLoading', false)"
                                         title="Edit" href="javascript:void(0)"
                                         :class="user.isLoading ? 'disabled' : ''"
                                         class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
@@ -138,7 +119,7 @@
                                     <a @click="deleteUser(user)" title="Delete" href="javascript:void(0)"
                                         class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                         <svg-icon name="delete"></svg-icon>
-                                    </a>
+                                    </a> -->
 
                                 </td>
 
@@ -173,26 +154,25 @@
 </template>
 
 <script setup>
-
 import './css/administration.css';
 import {
     Select,
     Option,
     Input,
     Button,
-    Page
+    Page,
+    Icon
 } from 'view-ui-plus';
-
+import TableRow from '@/vue/helpers/components/TableRow.vue';
+import ImagePreviewModal from '../../helpers/components/ImagePreviewModal.vue';
 import { useManageUser } from './js/administration';
 const {
     getUsers,
     storeMain,
     onSearch,
     onClear,
-    ACTIVE_TXT,
-    BANNED_TXT,
     updateStatus,
-    allUserStatus
+    allUserStatus,
 } = useManageUser();
 
 //Call function on page load

@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 
-
+const authUser = window.authUser ? window.authUser : null;
 export const useMainStore = defineStore({
     id: 'main',
     state: () => ({
-        // authUser : auth,
+        authUser : authUser,
         isModal : false,
         isModal2 : false,
         isModal3 : false,
@@ -28,6 +28,12 @@ export const useMainStore = defineStore({
     },
 
     actions: {
+        setAuthUser(data) {
+            this.authUser = data;
+        },
+        setDataLoading(value) {
+            this.dataLoading = value;
+        },
         setDataToList(data) {
             this.dataList = data;
         },

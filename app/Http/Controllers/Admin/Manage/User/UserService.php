@@ -43,9 +43,9 @@ class UserService
 
     public function updateUserStatus(UpdateStatusRequest $request): JsonResponse
     {
-        $user = $this->userFindOrFailBy('status', Utility::SUPER_ADMIN_TXT, '!=', $request->integer('user_id'));
+        $user = $this->userFindOrFailBy('status', Utility::SUPER_ADMIN, '!=', $request->integer('userId'));
         $formattedData = $this->formatUpdateStatusData($request->validated());
-        return withSuccess($formattedData, 'User status updated successfully!');
+
         if ($user->update($formattedData)) {
             return withSuccess($user, 'User status updated successfully!');
         }
