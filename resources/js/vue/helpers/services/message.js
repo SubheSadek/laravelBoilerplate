@@ -1,32 +1,36 @@
 import { Notice } from "view-ui-plus";
 
-export const info = (msg, i = "Hey !") => {
-    Notice.info({
+export const infoMsg = (msg, i = "Hey !") => {
+   return Notice.info({
         title: i,
-        desc: msg,
+        desc: msg + ' ℹ️ℹ️',
     });
 };
-export const success = (msg, i = "Great!") => {
-    Notice.success({
+export const successMsg = (msg, i = "Great!") => {
+   return Notice.success({
         title: i,
-        desc: msg,
+        desc: msg + ' 🎉😊🔥',
     });
 };
-export const warning = (msg, i = "Hey!") => {
-    Notice.warning({
+export const warningMsg = (msg, i = "Hey!") => {
+   return Notice.warning({
         title: i,
-        desc: msg,
+        desc: msg + ' ⚠️⚠️⚠️',
     });
 };
-export const error = (msg, i = "Oops!") => {
-    Notice.error({
+export const errorMsg = (msg, i = "Oops!") => {
+   return Notice.error({
         title: i,
-        desc: msg,
+        desc: msg + ' 😔😔',
     });
 };
-export const swr = () => {
-    Notice.error({
+export const swrMsg = () => {
+   return Notice.error({
         title: "Oops",
-        desc: "Something went wrong, please try again later. 😨😨😨",
+        desc: "Something went wrong, please try again later. 😔😔",
     });
 };
+
+export const formValidationFailedMsg = () => {
+   return warningMsg('Please, fill form correctly.');
+}

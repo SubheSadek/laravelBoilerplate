@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Manage\User\Requests;
 
-use App\Http\Controllers\Admin\Manage\User\UserService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateStatusRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is Authorized to make this request.
@@ -23,11 +22,10 @@ class UpdateStatusRequest extends FormRequest
      */
     public function rules(): array
     {
-        $status = (new UserService)->convertUserStatusToTxt();
-
         return [
-            'status' => ['required', 'string', 'in:'.$status],
-            'userId' => ['required', 'integer', Rule::exists('users', 'id')],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->route('userId'))],
+            'phone' => ['nullable', 'string', 'size:14', 'regex:/^\+8801[3-9]\d{8}$/', Rule::unique('users')->ignore($this->route('userId'))],
         ];
     }
 }

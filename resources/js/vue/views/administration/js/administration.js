@@ -1,20 +1,23 @@
 
-
 import { callApi } from '@/vue/helpers/services/callApi';
 import { useMainStore } from '@/vue/store';
-const storeMain = useMainStore();
+
 import { useSearch } from '@/vue/helpers/services/global';
 import { ALL_USER_STATUS } from '@/vue/helpers/services/utility';
 import { toCapitalizeCase } from '@/vue/helpers/services/global';
 import { reactive, ref } from 'vue';
-import { warning } from '@/vue/helpers/services/message'
+import { formValidationFailedMsg } from '@/vue/helpers/services/message'
 
 export const useManageUser = () => {
 
+    const storeMain = useMainStore();
     const { onSearch, onClear } = useSearch();
+    let editData = ref(null);
+    let isReadonly = ref(false);
+
     const getUsers = async () => {
         storeMain.setDataLoading(true);
-        const res = await callApi('get', '/admin/manage/users', storeMain.params, 'params');
+        const res = await callApi('get', '/admin/manage/user', storeMain.params, 'params');
         if (res.data.success) {
             storeMain.setDataToList(res.data.json_data);
         }
@@ -23,12 +26,24 @@ export const useManageUser = () => {
         }, 200);
     }
 
+    const openAddUserModel = () => {
+        editData.value = null;
+        storeMain.isModal = true;
+    }
+
+    const openEditUserModel = (user, loader) => {
+        user[loader] = true;
+        editData.value = user;
+        storeMain.isModal = true;
+        user[loader] = false;
+    }
+
     const updateStatus = async (user, status) => {
 
         const data = formatStatusUpdateData(user.id, status);
         user.isStatusChange = true;
 
-        const res = await callApi('post', '/admin/manage/users/update-status', data);
+        const res = await callApi('post', '/admin/manage/user/update-status', data);
         if (res.data.success) { }
 
         setTimeout(() => {
@@ -55,7 +70,11 @@ export const useManageUser = () => {
     }
 
     return {
+        editData,
+        isReadonly,
         getUsers,
+        openAddUserModel,
+        openEditUserModel,
         storeMain,
         onSearch,
         onClear,
@@ -67,9 +86,12 @@ export const useManageUser = () => {
 
 export const useCreateOREditUser = () => {
 
+    const storeMain = useMainStore();
+
     const isLoading = ref(false);
     const formRef = ref(null);
-    let formData = reactive({
+
+    const formData = reactive({
         name: null,
         email: null,
         phone: null,
@@ -77,13 +99,14 @@ export const useCreateOREditUser = () => {
         preview: null,
 
     });
+
     const ruleValidate = reactive({
         name: [
             { required: true, message: 'Please input name', trigger: 'blur' },
             { max: 255, message: 'Name must not be greater than 255 characters long', trigger: 'blur' },
         ],
         phone: [
-            { required: true, message: 'Please input phone number', trigger: 'blur' },
+            { required: false, message: 'Please input phone number', trigger: 'blur' },
             { max: 20, message: 'Phone must not be greater than 15 characters long', trigger: 'blur' },
         ],
         email: [
@@ -94,45 +117,73 @@ export const useCreateOREditUser = () => {
     });
 
 
-    const handleSubmit = () => {
-        formRef.value.validate(async (valid) => {
-            if (!valid) {
-                warning('Please fill form correctly');
-                return;
-            }
 
-            let method = this.editData ? 'PUT' : 'POST';
-            let url =
-                this.editData ?
-                `/admin/administration/admins/update-user/${this.editData.id}` :
-                '/admin/administration/admins/create-user';
+    const handleSubmit = (editData) => {
+        if (editData) {
+            return updateUser(editData.id);
+        }
+        return createUser();
+    }
+
+
+    const createUser = () => {
+        formRef.value.validate(async (valid) => {
+            if (!valid) return formValidationFailedMsg();
 
             isLoading.value = true;
 
-            this.headers['Content-Type'] = 'multipart/form-data';
-            const res = await this.callApi('POST', url, this.form);
-            if (res.status == 200) {
-                this.storeMain.isModal4 = false;
-                let data = res.data.json_data;
-                if (this.$route.name === 'users') {
-                    this.$store.commit('pushDataList', { data, method });
-                }
+            const res = await callApi('POST', '/admin/manage/user/store', formData);
+            if (res.data.success) {
 
-                this.$emit('createUser', {id: data.id, name: data.name, phone: data.phone})
+                storeMain.isModal = false;
+                let data = res.data.json_data;
+                storeMain.pushDataToList(data);
+
             }
-            this.headers['Content-Type'] = 'application/json';
 
             isLoading.value = false;
 
+        })
 
-            })
+    }
+
+
+    const updateUser = (userId) => {
+        formRef.value.validate(async (valid) => {
+            if (!valid) return formValidationFailedMsg();
+
+            isLoading.value = true;
+
+            const res = await callApi('PUT', '/admin/manage/user/update/' + userId, formData);
+            if (res.data.success) {
+
+                storeMain.isModal = false;
+                let data = res.data.json_data;
+                storeMain.replaceWithUpdatedData(data);
+
+            }
+
+            isLoading.value = false;
+
+        })
+    }
+
+
+    const setEditData = (user) => {
+        formData.name = user.name,
+        formData.email = user.email,
+        formData.phone = user.phone,
+        formData.profile_pic = user.profile_pic,
+        formData.preview = user.preview
     }
 
     return {
-        formData,
-        ruleValidate,
         storeMain,
         isLoading,
-        formRef
+        formRef,
+        formData,
+        ruleValidate,
+        handleSubmit,
+        setEditData
     }
 }

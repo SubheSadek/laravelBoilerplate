@@ -40,26 +40,22 @@ export const useMainStore = defineStore({
         setDataToListTwo(data) {
             this.dataListTwo = data;
         },
-        pushDataToList({data, method}) {
-            if(method == 'POST') {
-                this.dataList.data.unshift(data);
-                this.dataList.total += 1;
-            }
-            else if (method == 'PUT') {
-                let index = this.dataList.data.findIndex(item => item.id == data.id);
-                this.dataList.data.splice(index, 1, data);
-            }
+        pushDataToList(dataObj) {
+            this.dataList.data.unshift(dataObj);
+            this.dataList.total += 1;
         },
-        pushDataToListTwo({data, method}) {
-            if(method == 'POST') {
-                this.dataListTwo.data.unshift(data);
-                this.dataListTwo.total += 1;
-            }
-            else if (method == 'PUT') {
-                let index = this.dataListTwo.data.findIndex(item => item.id == data.id);
-                this.dataListTwo.data.splice(index, 1, data);
-            }
+        replaceWithUpdatedData(dataObj) {
+            let index = this.dataList.data.findIndex(item => item.id == dataObj.id);
+            this.dataList.data.splice(index, 1, dataObj);
         },
+        pushDataToListTwo(dataObj) {
+            this.dataListTwo.data.unshift(dataObj);
+            this.dataListTwo.total += 1;
+        },
+        replaceWithUpdatedDataTwo(dataObj) {
+            let index = this.dataListTwo.data.findIndex(item => item.id == dataObj.id);
+            this.dataListTwo.data.splice(index, 1, dataObj);
+        }
     }
 
 });

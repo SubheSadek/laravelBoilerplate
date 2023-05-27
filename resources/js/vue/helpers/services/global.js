@@ -1,5 +1,5 @@
 
-import { info } from "./message";
+import { infoMsg } from "./message";
 import { useMainStore } from '@/vue/store';
 
 export const baseUrl = window.baseUrl;
@@ -9,10 +9,7 @@ export const useSearch = () => {
     const storeMain = useMainStore();
 
     const onSearch = (callback) => {
-        if (!storeMain.params.searchTxt) {
-            info('Please enter some text!');
-            return;
-        }
+        if (!storeMain.params.searchTxt) return infoMsg('Please enter some text!');
         storeMain.params.page = 1;
         callback();
     }

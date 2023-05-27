@@ -2,9 +2,9 @@
 
     <Modal
         :styles="{top: '20px'}" v-model="storeMain.isModal"
-        :loading="isLoading" width="1200" footer-hide draggable
+        :loading="isLoading" width="1000" footer-hide draggable
         class-name="vertical-center-modal" scrollable
-        :title="(editData ? 'Update' : 'Create') + ' User'">
+        :title="(editData ? 'Edit' : 'Create') + ' User'">
 
         <div class="modal-body pt-0">
             <Form ref="formRef" :model="formData" :rules="ruleValidate" class="form w-100">
@@ -12,7 +12,7 @@
                 <!-- <ProfilePic
                     v-model:profilePic="form.profile_pic"
                     v-model:preview="form.preview"
-                    :is-show="isShow"
+                    :is-show="isReadOnly"
                 /> -->
 
                 <Row :gutter="16">
@@ -21,7 +21,7 @@
                         <div class="d-flex flex-column fv-row">
                             <FormItem class="form-label fs-6 fw-bolder text-dark" label="Name" prop="name">
                                 <Input size="large"
-                                    :border="!isShow" :readonly="isShow"
+                                    :border="!isReadOnly" :readonly="isReadOnly"
                                     v-model.trim="formData.name"
                                     type="text" placeholder="Name"
                                     show-word-limit maxlength="255"
@@ -35,8 +35,8 @@
                         <div class="d-flex flex-column fv-row">
                             <FormItem class="form-label fs-6 fw-bolder text-dark" label="Email" prop="email">
                                 <Input size="large"
-                                    :border="!isShow" :readonly="isShow"
-                                    v-model.trim="form.email"
+                                    :border="!isReadOnly" :readonly="isReadOnly"
+                                    v-model.trim="formData.email"
                                     type="text" placeholder="Email"
                                     show-word-limit maxlength="255"
                                     autocomplete="off">
@@ -49,10 +49,11 @@
                         <div class="d-flex flex-column fv-row">
                             <FormItem class="form-label fs-6 fw-bolder text-dark" label="Phone (+88017XXXXXXXX)" prop="phone">
                                 <Input size="large"
-                                    :border="!isShow"
-                                    :readonly="isShow"
-                                    v-model.trim="form.phone"
+                                    :border="!isReadOnly"
+                                    :readonly="isReadOnly"
+                                    v-model.trim="formData.phone"
                                     type="text" placeholder="+88017XXXXXXXX"
+                                    show-word-limit maxlength="14"
                                     autocomplete="off">
                                 </Input>
                             </FormItem>
@@ -61,10 +62,10 @@
 
                 </Row>
 
-                <div class="modal-button" v-if="!isShow">
+                <div class="modal-button" v-if="!isReadOnly">
 
                     <Button
-                        @click="handleSubmit('form')" size="large"
+                        @click="handleSubmit(editData)" size="large"
                         :loading="isLoading"
                         :disabled="isLoading"
                         icon="md-add" type="primary">
@@ -84,7 +85,6 @@
 </template>
 
 <script setup>
-
 import {
     Modal,
     Form,
@@ -94,17 +94,22 @@ import {
     Input,
     Button,
 } from 'view-ui-plus';
+const props  = defineProps(['editData', 'isReadOnly']);
 import { useCreateOREditUser } from '../js/administration';
-defineProps(['editData', 'isShow']);
+
 const {
-    formData,
-    ruleValidate,
     storeMain,
     isLoading,
-    formRef
+    formRef,
+    formData,
+    ruleValidate,
+    handleSubmit,
+    setEditData
 } = useCreateOREditUser();
 
-
+if (props.editData) {
+    setEditData(props.editData);
+}
 // import ProfilePic from './ProfilePic.vue'
 </script>
 

@@ -34,8 +34,8 @@ class User extends Authenticatable
     {
         return $query->when($searchTxt, function (Builder $query, string $searchTxt) {
             $query->where(function ($query) use ($searchTxt) {
-                $query->where('name', 'like', '%'.$searchTxt.'%');
-                $query->orWhere('phone', 'like', '%'.$searchTxt.'%');
+                $query->where('name', 'like', '%' . $searchTxt . '%');
+                $query->orWhere('email', 'like', '%' . $searchTxt . '%');
             });
         });
     }

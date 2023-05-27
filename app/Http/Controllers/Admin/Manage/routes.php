@@ -17,8 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('manage')->as('manage.')->middleware('auth')
     ->group(function ($route) {
 
-        $route->prefix('users')->as('users.')->controller(UserController::class)->group(function ($route) {
+        $route->prefix('user')->as('user.')->controller(UserController::class)->group(function ($route) {
             $route->get('/', 'index')->name('index');
-            $route->post('/update-status', 'updateStatus')->name('update_status');
+            $route->post('/store', 'store')->name('store');
+            $route->put('/update/{userId}', 'update')->name('update');
+            $route->delete('/delete/{userId}', 'delete')->name('delete');
+            $route->delete('/update-status', 'updateStatus')->name('update_status');
         });
     });

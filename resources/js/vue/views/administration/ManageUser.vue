@@ -27,7 +27,7 @@
 
             <div class="card-toolbar">
 
-                <a @click="addUser()" href="javascript:void(0)" class="btn btn-sm btn-light-primary">
+                <a @click="openAddUserModel()" href="javascript:void(0)" class="btn btn-sm btn-light-primary">
                     <svg-icon name="plus"></svg-icon>
                     New User
                 </a>
@@ -101,15 +101,17 @@
                                 </td>
 
                                 <td class="text-end">
+                                    <Tooltip :content="user.isEditing ? 'Please wait...' : 'Edit User'" placement="top-end">
+                                        <a @click="openEditUserModel(user, 'isEditing')"
+                                            :class="user.isEditing && 'disabled'"
+                                            href="javascript:void(0)"
+                                            class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                            <svg-icon :name="user.isEditing ? 'loading' : 'edit'"></svg-icon>
+                                        </a>
+                                    </Tooltip>
 
-                                    <!-- <a @click="editRow(user, 'isLoading', false)"
-                                        title="Edit" href="javascript:void(0)"
-                                        :class="user.isLoading ? 'disabled' : ''"
-                                        class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                        <svg-icon :name="user.isLoading ? 'loading' : 'edit'"></svg-icon>
-                                    </a>
 
-                                    <a @click="editRow(user, 'isLoading3', true)"
+                                    <!--<a @click="editRow(user, 'isLoading3', true)"
                                         title="View Details" href="javascript:void(0)"
                                         :class="user.isLoading ? 'disabled' : ''"
                                         class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
@@ -145,11 +147,12 @@
         show-sizer style="text-align:center;"
     />
 
-    <!-- <createOrEditModal v-if="$store.state.isModal" :editData="editData" />
-    <createOrEditUserModal
-        v-if="$store.state.isModal4"
-        :editData="editData" :is-show="isShow"
-     /> -->
+    <!-- <createOrEditModal v-if="$store.state.isModal" :editData="editData" /> -->
+    <CreateOrEditUserModal
+        v-if="storeMain.isModal"
+        :edit-data="editData"
+        :is-read-only="isReadonly"
+     />
 
 </template>
 
@@ -161,13 +164,19 @@ import {
     Input,
     Button,
     Page,
-    Icon
+    Icon,
+    Tooltip
 } from 'view-ui-plus';
 import TableRow from '@/vue/helpers/components/TableRow.vue';
-import ImagePreviewModal from '../../helpers/components/ImagePreviewModal.vue';
+import ImagePreviewModal from '@/vue/helpers/components/ImagePreviewModal.vue';
+import CreateOrEditUserModal from './components/CreateOrEditUserModal.vue';
 import { useManageUser } from './js/administration';
 const {
+    editData,
+    isReadonly,
     getUsers,
+    openAddUserModel,
+    openEditUserModel,
     storeMain,
     onSearch,
     onClear,
