@@ -45,6 +45,11 @@ class User extends Authenticatable
         return $query->whereNotIn('user_type', Utility::ADMIN_USER_TYPES);
     }
 
+    public function scopeNotSuperAdmin(Builder $query): Builder
+    {
+        return $query->where('user_type', '!=', Utility::SUPER_ADMIN);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

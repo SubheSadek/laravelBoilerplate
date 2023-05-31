@@ -20,9 +20,9 @@ class UserController extends Controller
         return $this->userService->getUserList($request);
     }
 
-    public function updateStatus(UpdateStatusRequest $request)
+    public function updateStatus(UpdateStatusRequest $request, $userId): JsonResponse
     {
-        return $this->userService->updateUserStatus($request);
+        return $this->userService->updateUserStatus($request->validated(), $userId);
     }
 
     public function store(CreateUserRequest $request): JsonResponse
@@ -37,6 +37,6 @@ class UserController extends Controller
 
     public function delete()
     {
-
+        return 'ok';
     }
 }

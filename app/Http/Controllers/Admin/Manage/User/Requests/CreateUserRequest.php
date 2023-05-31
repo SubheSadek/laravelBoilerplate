@@ -26,6 +26,7 @@ class CreateUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255', Rule::unique('users')],
             'phone' => ['nullable', 'string', 'size:14', 'regex:/^\+8801[3-9]\d{8}$/', Rule::unique('users')],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ];
     }
 }

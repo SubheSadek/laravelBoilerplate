@@ -7,6 +7,7 @@ import { ALL_USER_STATUS } from '@/vue/helpers/services/utility';
 import { toCapitalizeCase } from '@/vue/helpers/services/global';
 import { reactive, ref } from 'vue';
 import { formValidationFailedMsg } from '@/vue/helpers/services/message'
+import { confirmModal } from '../../../helpers/services/global';
 
 export const useManageUser = () => {
 
@@ -43,7 +44,7 @@ export const useManageUser = () => {
         const data = formatStatusUpdateData(user.id, status);
         user.isStatusChange = true;
 
-        const res = await callApi('post', '/admin/manage/user/update-status', data);
+        const res = await callApi('PUT', '/admin/manage/user/update-status/'+ user.id, data);
         if (res.data.success) { }
 
         setTimeout(() => {
@@ -69,6 +70,24 @@ export const useManageUser = () => {
         });
     }
 
+    const deleteUser = (user, isDeleted) => {
+
+        confirmModal(
+            'Are u sure to delete this user?',
+            async (onOk) => {
+
+                user[isDeleted] = true;
+
+                const res = await callApi('DELETE', '/admin/manage/user/delete/'+user.id);
+                if (res.data.success) {
+                    console.log(res.data.json_data)
+                }
+
+                user[isDeleted] = false;
+            }
+        )
+    }
+
     return {
         editData,
         isReadonly,
@@ -79,12 +98,13 @@ export const useManageUser = () => {
         onSearch,
         onClear,
         updateStatus,
-        allUserStatus
+        allUserStatus,
+        deleteUser
     }
 }
 
 
-export const useCreateOREditUser = () => {
+export const useCreateOREditUser = (editData) => {
 
     const storeMain = useMainStore();
 
@@ -97,8 +117,17 @@ export const useCreateOREditUser = () => {
         phone: null,
         profile_pic: null,
         preview: null,
-
+        password: null,
+        password_confirmation: null,
     });
+
+
+    const isPasswordRequired = () => {
+        if (editData) {
+            return false;
+        }
+        return true;
+    }
 
     const ruleValidate = reactive({
         name: [
@@ -114,11 +143,27 @@ export const useCreateOREditUser = () => {
             { max: 255, message: 'Email must not be greater than 255 characters long', trigger: 'blur' },
             { type: 'email', message: 'Please input a valid email address', trigger: 'blur' },
         ],
+        password: [
+            { required: isPasswordRequired(), type:'string', message: 'Please input password', trigger: 'blur' },
+            { min: 6, max: 255, message: 'Password must be between 6 and 255 characters', trigger: 'blur' },
+        ],
+        password_confirmation: [
+            {
+                validator: (rule, value, callback) => {
+                    if (formData.password && value === '') {
+                        callback(new Error('Please input password confirmation'));
+                    } else if (formData.password && value !== formData.password) {
+                        callback(new Error('Password confirmation is not same with password'));
+                    } else {
+                        callback();
+                    }
+                }, trigger: 'blur'
+            },
+        ]
     });
 
 
-
-    const handleSubmit = (editData) => {
+    const handleSubmit = () => {
         if (editData) {
             return updateUser(editData.id);
         }
@@ -169,12 +214,12 @@ export const useCreateOREditUser = () => {
     }
 
 
-    const setEditData = (user) => {
-        formData.name = user.name,
-        formData.email = user.email,
-        formData.phone = user.phone,
-        formData.profile_pic = user.profile_pic,
-        formData.preview = user.preview
+    const setEditData = () => {
+        formData.name = editData.name,
+        formData.email = editData.email,
+        formData.phone = editData.phone,
+        formData.profile_pic = editData.profile_pic,
+        formData.preview = editData.preview
     }
 
     return {

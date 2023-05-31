@@ -1,4 +1,5 @@
 
+import { Modal } from "view-ui-plus";
 import { infoMsg } from "./message";
 import { useMainStore } from '@/vue/store';
 
@@ -36,3 +37,20 @@ export const addUrl = (img) => {
     if (!img) return defaultImg;
     return (baseUrl + img);
 }
+
+export const confirmModal = (msgTxt, onOkCallback, cancelCallback = (() => {})) => {
+    Modal.confirm({
+        title: 'Warning',
+        okText: 'Yes',
+        cancelText: 'Cancel',
+        content: msgTxt,
+        onOk: async () => {
+            onOkCallback(true);
+        },
+        onCancel: async () => {
+            cancelCallback(true)
+        }
+    });
+}
+
+

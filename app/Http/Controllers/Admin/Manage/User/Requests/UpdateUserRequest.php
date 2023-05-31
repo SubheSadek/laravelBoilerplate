@@ -26,6 +26,7 @@ class UpdateUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->route('userId'))],
             'phone' => ['nullable', 'string', 'size:14', 'regex:/^\+8801[3-9]\d{8}$/', Rule::unique('users')->ignore($this->route('userId'))],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ];
     }
 }

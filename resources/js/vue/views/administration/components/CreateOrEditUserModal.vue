@@ -60,12 +60,38 @@
                         </div>
                     </Col>
 
+                    <Col span="12">
+                        <div class="d-flex flex-column fv-row">
+                            <FormItem class="form-label fs-6 fw-bolder text-dark" label="Password" prop="password">
+                                <Input
+                                    size="large" password
+                                    v-model.trim="formData.password"
+                                    type="password" placeholder="Enter your password"
+                                    autocomplete="off">
+                                </Input>
+                            </FormItem>
+                        </div>
+                    </Col>
+
+                    <Col span="12">
+                        <div class="d-flex flex-column fv-row">
+                            <FormItem class="form-label fs-6 fw-bolder text-dark" label="Confirm password" prop="password_confirmation">
+                                <Input
+                                    size="large" password
+                                    v-model.trim="formData.password_confirmation"
+                                    type="password" placeholder="Enter your password"
+                                    autocomplete="off">
+                                </Input>
+                            </FormItem>
+                        </div>
+                    </Col>
+
                 </Row>
 
                 <div class="modal-button" v-if="!isReadOnly">
 
                     <Button
-                        @click="handleSubmit(editData)" size="large"
+                        @click="handleSubmit()" size="large"
                         :loading="isLoading"
                         :disabled="isLoading"
                         icon="md-add" type="primary">
@@ -105,10 +131,10 @@ const {
     ruleValidate,
     handleSubmit,
     setEditData
-} = useCreateOREditUser();
+} = useCreateOREditUser(props.editData);
 
 if (props.editData) {
-    setEditData(props.editData);
+    setEditData();
 }
 // import ProfilePic from './ProfilePic.vue'
 </script>

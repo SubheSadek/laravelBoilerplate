@@ -2,22 +2,23 @@
 
 const adminRoutes = [
     {
-        path: "/manage",
-        name: "manage",
+        path: "/administration",
+        name: "administration",
         meta: {
-            title: "Manage",
-            menuName: "Manage",
+            title: "Administration",
+            menuName: "Administration",
             iconName: "administration",
         },
         children: [
             {
-                path: "users",
+                path: "manage-users",
                 name: "manageUsers",
                 component: () => import("../ManageUser.vue"),
                 meta: {
                     title: "Manage User",
                     menuName: "Manage users",
                     iconName: "homeIcon",
+                    parent: "administration",
                 },
             },
         ],

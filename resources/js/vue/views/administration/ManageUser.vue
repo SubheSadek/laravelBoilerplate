@@ -116,13 +116,13 @@
                                         :class="user.isLoading ? 'disabled' : ''"
                                         class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                         <svg-icon :name="user.isLoading3 ? 'loading' : 'eye'"></svg-icon>
-                                    </a>
+                                    </a>-->
+
 
                                     <a @click="deleteUser(user)" title="Delete" href="javascript:void(0)"
                                         class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                         <svg-icon name="delete"></svg-icon>
-                                    </a> -->
-
+                                    </a>
                                 </td>
 
                             </tr>
@@ -182,6 +182,7 @@ const {
     onClear,
     updateStatus,
     allUserStatus,
+    deleteUser
 } = useManageUser();
 
 //Call function on page load

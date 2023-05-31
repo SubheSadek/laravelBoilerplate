@@ -20,8 +20,8 @@ Route::prefix('manage')->as('manage.')->middleware('auth')
         $route->prefix('user')->as('user.')->controller(UserController::class)->group(function ($route) {
             $route->get('/', 'index')->name('index');
             $route->post('/store', 'store')->name('store');
-            $route->put('/update/{userId}', 'update')->name('update');
-            $route->delete('/delete/{userId}', 'delete')->name('delete');
-            $route->delete('/update-status', 'updateStatus')->name('update_status');
+            $route->put('/update/{userId}', 'update')->name('update')->where('userId', '[0-9]+');
+            $route->put('/update-status/{userId}', 'updateStatus')->name('update_status')->where('userId', '[0-9]+');
+            $route->delete('/delete/{userId}', 'delete')->name('delete')->where('userId', '[0-9]+');
         });
     });

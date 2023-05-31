@@ -26,8 +26,7 @@ class UpdateStatusRequest extends FormRequest
         $status = (new UserService)->convertUserStatusToTxt();
 
         return [
-            'status' => ['required', 'string', 'in:'.$status],
-            'userId' => ['required', 'integer', Rule::exists('users', 'id')],
+            'status' => ['required', 'string', 'in:' . $status]
         ];
     }
 }

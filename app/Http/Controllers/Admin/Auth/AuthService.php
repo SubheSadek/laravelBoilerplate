@@ -10,13 +10,13 @@ class AuthService
 {
     public function checkAdminAuthorization(string $email): bool
     {
-        $user = (new UserService)->userFindOrFailBy('email', $email);
+        $user = (new UserService)->findUserByKeyValue('email', $email);
 
         if ($user->status !== Utility::USER_ACTIVE) {
             return false;
         }
 
-        if (! in_array($user->user_type, Utility::ADMIN_USER_TYPES)) {
+        if (!in_array($user->user_type, Utility::ADMIN_USER_TYPES)) {
             return false;
         }
 
@@ -26,7 +26,7 @@ class AuthService
     public function loginAdmin(array $data): JsonResponse
     {
         $isAuthorized = $this->checkAdminAuthorization($data['email']);
-        if (! $isAuthorized) {
+        if (!$isAuthorized) {
             return withError('Invalid Credentials', 400);
         }
 
