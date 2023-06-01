@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Manage\User\Requests;
+namespace App\Http\Controllers\Admin\Manage\Role\Requests;
 
-use App\Http\Controllers\Admin\Manage\User\UserService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UpdateStatusRequest extends FormRequest
+class CreateRoleRequest extends FormRequest
 {
     /**
-     * Determine if the user is Authorized to make this request.
+     * Determine if the role is Authorized to make this request.
      */
     public function authorize(): bool
     {
@@ -22,10 +22,8 @@ class UpdateStatusRequest extends FormRequest
      */
     public function rules(): array
     {
-        $status = (new UserService)->convertUserStatusToTxt();
-
         return [
-            'status' => ['required', 'string', 'in:'.$status],
+            'name' => ['required', 'string', 'max:255', Rule::unique('roles')],
         ];
     }
 }

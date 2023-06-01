@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Utilities\Utility;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -21,6 +22,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'role_id',
         'name',
         'email',
         'password',
@@ -34,20 +36,30 @@ class User extends Authenticatable
     {
         return $query->when($searchTxt, function (Builder $query, string $searchTxt) {
             $query->where(function ($query) use ($searchTxt) {
-                $query->where('name', 'like', '%' . $searchTxt . '%');
-                $query->orWhere('email', 'like', '%' . $searchTxt . '%');
+                $query->where('name', 'like', '%'.$searchTxt.'%');
+                $query->orWhere('email', 'like', '%'.$searchTxt.'%');
             });
         });
     }
 
     public function scopeWithoutAdminUser(Builder $query): Builder
     {
-        return $query->whereNotIn('user_type', Utility::ADMIN_USER_TYPES);
+        return $query->where('user_type', Utility::USER);
+    }
+
+    public function scopeWithAdminUser(Builder $query): Builder
+    {
+        return $query->where('user_type', Utility::ADMIN);
     }
 
     public function scopeNotSuperAdmin(Builder $query): Builder
     {
         return $query->where('user_type', '!=', Utility::SUPER_ADMIN);
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 
     /**

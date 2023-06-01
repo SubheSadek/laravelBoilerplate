@@ -1,13 +1,13 @@
 
-import { callApi } from '@/vue/helpers/services/callApi';
+import { callApi } from '../../../../helpers/services/callApi';
 import { useMainStore } from '@/vue/store';
 
-import { useSearch } from '@/vue/helpers/services/global';
-import { ALL_USER_STATUS } from '@/vue/helpers/services/utility';
-import { toCapitalizeCase } from '@/vue/helpers/services/global';
+import { useSearch, toCapitalizeCase, confirmModal } from '../../../../helpers/services/global';
+import { ALL_USER_STATUS } from '../../../../helpers/services/utility';
 import { reactive, ref } from 'vue';
-import { formValidationFailedMsg } from '@/vue/helpers/services/message'
-import { confirmModal } from '../../../helpers/services/global';
+import { formValidationFailedMsg } from '../../../../helpers/services/message'
+import { lowerCase } from 'lodash';
+
 
 export const useManageUser = () => {
 
@@ -65,25 +65,24 @@ export const useManageUser = () => {
             return {
                 value: item,
                 name: toCapitalizeCase(item),
-                className: `_${item.toLowerCase()}`
+                className: `_${lowerCase(item)}`
             }
         });
     }
 
-    const deleteUser = (user, isDeleted) => {
+    const deleteUser = (user, isDeleting) => {
 
         confirmModal(
             'Are u sure to delete this user?',
             async (onOk) => {
 
-                user[isDeleted] = true;
-
+                user[isDeleting] = true;
                 const res = await callApi('DELETE', '/admin/manage/user/delete/'+user.id);
                 if (res.data.success) {
-                    console.log(res.data.json_data)
+                    getUsers();
                 }
+                user[isDeleting] = false;
 
-                user[isDeleted] = false;
             }
         )
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Manage\User\Requests;
+namespace App\Http\Controllers\Admin\Manage\Admin\Requests;
 
 use App\Http\Controllers\Admin\Manage\User\UserService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class UpdateStatusRequest extends FormRequest
 {
     /**
-     * Determine if the user is Authorized to make this request.
+     * Determine if the admin is Authorized to make this request.
      */
     public function authorize(): bool
     {

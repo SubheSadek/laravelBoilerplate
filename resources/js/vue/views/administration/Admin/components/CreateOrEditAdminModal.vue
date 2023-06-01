@@ -4,18 +4,26 @@
         :styles="{top: '20px'}" v-model="storeMain.isModal"
         :loading="isLoading" width="1000" footer-hide draggable
         class-name="vertical-center-modal" scrollable
-        :title="(editData ? 'Edit' : 'Create') + ' User'">
+        :title="(editData ? 'Edit' : 'Create') + ' Admin'">
 
         <div class="modal-body pt-0">
             <Form ref="formRef" :model="formData" :rules="ruleValidate" class="form w-100">
 
-                <!-- <ProfilePic
-                    v-model:profilePic="form.profile_pic"
-                    v-model:preview="form.preview"
-                    :is-show="isReadOnly"
-                /> -->
-
                 <Row :gutter="16">
+
+                    <Col span="12">
+                        <div class="d-flex flex-column fv-row">
+                            <FormItem class="form-label fs-6 fw-bolder text-dark" label="Admin Role" prop="role_id">
+                                <SelectOptionStatic
+                                    v-model:formValue="formData.role_id"
+                                    :initialData="roleList"
+                                    :title="'Please select admin role'"
+                                    @onChange="() => {}"
+                                    v-if="!storeMain.dataLoading"
+                                />
+                            </FormItem>
+                        </div>
+                    </Col>
 
                     <Col span="12">
                         <div class="d-flex flex-column fv-row">
@@ -98,11 +106,11 @@
                         {{ isLoading ? 'Please wait...' : 'Save Changes' }}
                     </Button>
 
-                    <Button @click="storeMain.isModal4 = false;" size="large" type="default">Close</Button>
+                    <Button @click="storeMain.isModal = false;" size="large" type="default">Close</Button>
                 </div>
 
                 <div v-else class="modal-button">
-                    <Button @click="storeMain.isModal4 = false;" long size="large" type="primary"> ❌ Close</Button>
+                    <Button @click="storeMain.isModal = false;" long size="large" type="primary"> ❌ Close</Button>
                 </div>
 
             </Form>
@@ -120,8 +128,9 @@ import {
     Input,
     Button,
 } from 'view-ui-plus';
+import SelectOptionStatic from '@/vue/helpers/components/SelectOptionStatic.vue';
 const props  = defineProps(['editData', 'isReadOnly']);
-import { useCreateOREditUser } from '../js/administration';
+import { useCreateOREditAdmin } from '../js/admin';
 
 const {
     storeMain,
@@ -130,9 +139,12 @@ const {
     formData,
     ruleValidate,
     handleSubmit,
-    setEditData
-} = useCreateOREditUser(props.editData);
+    setEditData,
+    roleList,
+    getRoleList
+} = useCreateOREditAdmin(props.editData);
 
+    getRoleList();
 if (props.editData) {
     setEditData();
 }

@@ -2,6 +2,7 @@
 import { Modal } from "view-ui-plus";
 import { infoMsg } from "./message";
 import { useMainStore } from '@/vue/store';
+import { lowerCase, upperFirst } from "lodash";
 
 export const baseUrl = window.baseUrl;
 export const defaultImg = (baseUrl + 'assets/images/blank_image.svg');
@@ -29,8 +30,7 @@ export const useSearch = () => {
 
 export const toCapitalizeCase = (txt) => {
     if (!txt) return txt;
-    txt = txt.toLowerCase();
-    return txt.charAt(0).toUpperCase() + txt.slice(1);
+    return upperFirst(lowerCase(txt));
 }
 
 export const addUrl = (img) => {

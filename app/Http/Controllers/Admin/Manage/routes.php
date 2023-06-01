@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\Manage\Admin\AdminController;
+use App\Http\Controllers\Admin\Manage\Role\RoleController;
 use App\Http\Controllers\Admin\Manage\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,22 @@ Route::prefix('manage')->as('manage.')->middleware('auth')
             $route->post('/store', 'store')->name('store');
             $route->put('/update/{userId}', 'update')->name('update')->where('userId', '[0-9]+');
             $route->put('/update-status/{userId}', 'updateStatus')->name('update_status')->where('userId', '[0-9]+');
+            $route->delete('/delete/{userId}', 'delete')->name('delete')->where('userId', '[0-9]+');
+        });
+
+        $route->prefix('admin')->as('admin.')->controller(AdminController::class)->group(function ($route) {
+            $route->get('/', 'index')->name('index');
+            $route->post('/store', 'store')->name('store');
+            $route->put('/update/{adminId}', 'update')->name('update')->where('adminId', '[0-9]+');
+            $route->put('/update-status/{adminId}', 'updateStatus')->name('update_status')->where('adminId', '[0-9]+');
+            $route->delete('/delete/{adminId}', 'delete')->name('delete')->where('adminId', '[0-9]+');
+        });
+
+        $route->prefix('role')->as('role.')->controller(RoleController::class)->group(function ($route) {
+            $route->get('/', 'index')->name('index');
+            $route->get('/role-list', 'roleList')->name('role_list');
+            $route->post('/store', 'store')->name('store');
+            $route->put('/update/{userId}', 'update')->name('update')->where('userId', '[0-9]+');
             $route->delete('/delete/{userId}', 'delete')->name('delete')->where('userId', '[0-9]+');
         });
     });

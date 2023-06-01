@@ -32,5 +32,5 @@ export const swrMsg = () => {
 };
 
 export const formValidationFailedMsg = () => {
-   return warningMsg('Please, fill form correctly.');
+   return warningMsg('Please fill form correctly.');
 }

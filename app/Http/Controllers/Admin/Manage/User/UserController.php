@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin\Manage\User;
 
 use App\Http\Controllers\Admin\Manage\User\Requests\CreateUserRequest;
-use App\Http\Controllers\Admin\Manage\User\Requests\ListRequest;
 use App\Http\Controllers\Admin\Manage\User\Requests\UpdateStatusRequest;
 use App\Http\Controllers\Admin\Manage\User\Requests\UpdateUserRequest;
+use App\Http\Controllers\Admin\Manage\User\Requests\UserListRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -15,9 +16,9 @@ class UserController extends Controller
     {
     }
 
-    public function index(ListRequest $request): JsonResponse
+    public function index(UserListRequest $request): JsonResponse
     {
-        return $this->userService->getUserList($request);
+        return $this->userService->getUserList($request->validated());
     }
 
     public function updateStatus(UpdateStatusRequest $request, $userId): JsonResponse
@@ -35,8 +36,8 @@ class UserController extends Controller
         return $this->userService->updateUser($request->validated(), $userId);
     }
 
-    public function delete()
+    public function delete(Request $request, $userId): JsonResponse
     {
-        return 'ok';
+        return $this->userService->deleteUser($userId);
     }
 }

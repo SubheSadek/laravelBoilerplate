@@ -9,7 +9,7 @@ function withSuccess(mixed $data = '', string $message = '', int $status = 200):
     return customResponse($data, true, $status, $message);
 }
 
-function withError(string $message, int $status, mixed $data = null): mixed
+function withError(string $message, int $status = 400, mixed $data = null): mixed
 {
     return customResponse($data, false, $status, $message);
 }

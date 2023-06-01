@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers\Admin\Manage\User;
 
-use App\Http\Controllers\Admin\Manage\User\Requests\ListRequest;
-use App\Http\Controllers\Admin\Manage\User\Requests\UpdateStatusRequest;
 use App\Http\Controllers\Admin\Manage\User\Resources\UserResource;
 use App\Models\User;
-use App\Traits\RequestFormatter;
 use App\Utilities\Utility;
 use Illuminate\Http\JsonResponse;
 
 class UserService
 {
-    use RequestFormatter;
-
-    public function getUserList(ListRequest $request): JsonResponse
+    public function getUserList(array $requestData): JsonResponse
     {
-        $formattedData = $this->formatUserListRequest($request);
+        $formattedData = $this->formatUserListRequest($requestData);
         $users = User::withoutAdminUser()->latest('id')
             ->filterBy($formattedData['searchTxt'])
             ->paginate($formattedData['pageSize']);
@@ -26,38 +21,71 @@ class UserService
 
     public function updateUserStatus(array $requestData, int $userId): JsonResponse
     {
-        $user = $this->findUserByIdExceptSuperAdmin($userId);
 
-        if ($user->update($requestData)) {
+        if ($this->updateUserData($requestData, $userId)) {
+            $user = $this->findUserByIdExceptSuperAdmin($userId);
+
             return withSuccess(new UserResource($user), 'User status updated successfully!');
         }
 
-        return withError('User status update failed', 400);
+        return withError('User status update failed');
     }
 
     public function createUser(array $requestData): JsonResponse
     {
-        $user = User::create($requestData);
-        return withSuccess(new UserResource($user->refresh()), 'User status updated successfully!');
+        $user = $this->createNewUser($requestData);
+
+        return withSuccess(new UserResource($user->refresh()), 'User created successfully!');
     }
 
     public function updateUser(array $requestData, int $userId): JsonResponse
     {
-        $user = $this->findUserByIdExceptSuperAdmin($userId);
+
         $formattedData = $this->formatUpdateRequestData($requestData);
-        if ($user->update($formattedData)) {
+
+        if ($this->updateUserData($formattedData, $userId)) {
+            $user = $this->findUserByIdExceptSuperAdmin($userId);
+
             return withSuccess(new UserResource($user), 'User updated successfully!');
         }
 
-        return withError('User updated Failed!', 400);
+        return withError('User updated Failed!');
     }
 
-    public function formatUserListRequest(ListRequest $request): array
+    public function createNewUser(array $requestData): User
+    {
+        return User::create($requestData);
+    }
+
+    public function deleteUser(int $userId): JsonResponse
+    {
+        if ($this->deleteUserData($userId)) {
+            return withSuccess('', 'User deleted successfully!');
+        }
+
+        return withError('User deletion failed');
+    }
+
+    //Helper Methods
+
+    public function formatUserListRequest(array $requestData): array
     {
         return [
-            ...$this->formatCommonListRequest($request),
-            'status' => $request->string('status') ?? '',
+            ...$requestData,
+            'searchTxt' => $requestData['searchTxt'] ?? '',
+            'status' => $requestData['status'] ?? '',
         ];
+    }
+
+    public function updateUserData(array $requestData, int $userId): bool
+    {
+        return User::notSuperAdmin()->where('id', $userId)
+            ->update($requestData);
+    }
+
+    public function deleteUserData(int $userId): bool
+    {
+        return User::notSuperAdmin()->where('id', $userId)->delete();
     }
 
     public function findUserById(int $userId): ?User
@@ -87,9 +115,10 @@ class UserService
 
     public function formatUpdateRequestData(array $requestData): array
     {
-        if (isset($requestData['password']) && !$requestData['password']) {
+        if (isset($requestData['password']) && ! $requestData['password']) {
             unset($requestData['password']);
         }
+
         return $requestData;
     }
 }

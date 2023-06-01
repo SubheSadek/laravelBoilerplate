@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AdminRoutes from "@/vue/views/administration/js/adminRoutes";
+import AdminRoutes from "@/vue/views/administration/routes";
 // const auth = window.authUser ? window.authUser : null;
 
 const masterRoutes = [

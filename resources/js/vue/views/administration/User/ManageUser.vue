@@ -102,27 +102,27 @@
 
                                 <td class="text-end">
                                     <Tooltip :content="user.isEditing ? 'Please wait...' : 'Edit User'" placement="top-end">
-                                        <a @click="openEditUserModel(user, 'isEditing')"
+                                        <a
+                                            @click="openEditUserModel(user, 'isEditing')"
                                             :class="user.isEditing && 'disabled'"
                                             href="javascript:void(0)"
-                                            class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                            class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                                        >
                                             <svg-icon :name="user.isEditing ? 'loading' : 'edit'"></svg-icon>
                                         </a>
                                     </Tooltip>
 
+                                    <Tooltip :content="user.isDeleting ? 'Please wait...' : 'Delete User'" placement="top-end">
+                                        <a
+                                            @click="deleteUser(user, 'isDeleting')"
+                                            href="javascript:void(0)"
+                                            :class="user.isDeleting && 'disabled'"
+                                            class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
+                                        >
+                                            <svg-icon :name="user.isDeleting ? 'loading' : 'delete'"></svg-icon>
+                                        </a>
+                                    </Tooltip>
 
-                                    <!--<a @click="editRow(user, 'isLoading3', true)"
-                                        title="View Details" href="javascript:void(0)"
-                                        :class="user.isLoading ? 'disabled' : ''"
-                                        class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                        <svg-icon :name="user.isLoading3 ? 'loading' : 'eye'"></svg-icon>
-                                    </a>-->
-
-
-                                    <a @click="deleteUser(user)" title="Delete" href="javascript:void(0)"
-                                        class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                        <svg-icon name="delete"></svg-icon>
-                                    </a>
                                 </td>
 
                             </tr>
@@ -157,7 +157,7 @@
 </template>
 
 <script setup>
-import './css/administration.css';
+import './css/user.css';
 import {
     Select,
     Option,
@@ -170,7 +170,7 @@ import {
 import TableRow from '@/vue/helpers/components/TableRow.vue';
 import ImagePreviewModal from '@/vue/helpers/components/ImagePreviewModal.vue';
 import CreateOrEditUserModal from './components/CreateOrEditUserModal.vue';
-import { useManageUser } from './js/administration';
+import { useManageUser } from './js/user';
 const {
     editData,
     isReadonly,

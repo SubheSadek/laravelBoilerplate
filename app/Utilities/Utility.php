@@ -12,7 +12,9 @@ class Utility
 
     const SUPER_ADMIN = 'SUPER_ADMIN';
 
-    const ADMIN_TXT = 'SUPER_ADMIN';
+    const ADMIN = 'ADMIN';
 
-    const ADMIN_USER_TYPES = [self::SUPER_ADMIN, self::ADMIN_TXT];
+    const USER = 'USER';
+
+    const ADMIN_USER_TYPES = [self::SUPER_ADMIN, self::ADMIN, self::USER];
 }

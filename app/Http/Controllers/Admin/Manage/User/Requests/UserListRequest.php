@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Manage\User\Requests;
 
-use App\Http\Controllers\Admin\Manage\User\UserService;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateStatusRequest extends FormRequest
+class UserListRequest extends FormRequest
 {
     /**
      * Determine if the user is Authorized to make this request.
@@ -22,10 +21,10 @@ class UpdateStatusRequest extends FormRequest
      */
     public function rules(): array
     {
-        $status = (new UserService)->convertUserStatusToTxt();
-
         return [
-            'status' => ['required', 'string', 'in:'.$status],
+            'pageSize' => ['required', 'integer', 'min:1'],
+            'page' => ['required', 'integer', 'min:1'],
+            'searchTxt' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
