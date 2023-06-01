@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Manage\Admin;
 use App\Http\Controllers\Admin\Manage\Admin\Resources\AdminResource;
 use App\Http\Controllers\Admin\Manage\User\UserService;
 use App\Models\User;
+use App\Utilities\Utility;
 use Illuminate\Http\JsonResponse;
 
 class AdminService
@@ -37,7 +38,8 @@ class AdminService
 
     public function createAdmin(array $requestData): JsonResponse
     {
-        $admin = $this->userService->createNewUser($requestData);
+        $formattedData = $this->formatCreateData($requestData);
+        $admin = $this->userService->createNewUser($formattedData);
 
         return withSuccess(new AdminResource($admin->load(['role'])->refresh()), 'Admin created successfully!');
     }
@@ -63,5 +65,12 @@ class AdminService
         }
 
         return withError('Admin deletion failed');
+    }
+
+
+    public function formatCreateData(array $requestData): array
+    {
+        $requestData['user_type'] = Utility::ADMIN;
+        return $requestData;
     }
 }
